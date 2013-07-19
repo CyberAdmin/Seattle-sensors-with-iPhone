@@ -808,7 +808,7 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
     if getmyip()==mycontext['primary']:  #Only super-nodes can register a new node to the network.
       #addToNodeList(message, sockobj)  #Write the vessel's ip address and its corresponding sensor and tell every node about it.
       obj = open("nodes.txt", "a")
-      print >> obj, message
+      print >> obj, find_between(message, "<REGISTER>", "</REGISTER>")
       obj.close()
       pushToAllNodes(sockobj)
     else:
@@ -831,74 +831,23 @@ def pushToAllNodes(sockobj):
   sockobj.send("REGISTER OK") #Sends an REGISTER OK message to acknowledge.
   ins = open("nodes.txt", "r") #Open the nodes.txt file for reading.
   x = ins.read()
-  ins.close()
-  lol = open("nodes.txt", "r")
+  ins.close()  #Close so that we don't have a file handle error.
+  lol = open("nodes.txt", "r")  #Create a new file reader so that we read lines and parse for ips.
   listOfNodes = lol.readlines()
   lol.close()
-  print x
-  print listOfNodes
-  nodes = []
+
+  nodes = []  #Create a new array of node ips
   for line in listOfNodes:
     if line != "\n":  #Add all IPs to the nodes array and exclude any new line commands.
       nodes.append(find_between(line, "<ip>", "</ip>"))
-      print "IP: "+find_between(line, "<ip>", "</ip>")
   for ip in nodes:
-    if ip=="\n": #Redundant. Remove ASAP
+    if ip=="\n": 
       print "Ignoring blank message."
     else:
-      """indIP = find_between(mes, "<ip>", "</ip>")
-      sendIPsToNodes(sockobj, indIP, find_between(mes, "<storenode>", "</storenode>"))
-      """
-      print "Now sending to: "+ip
-      print "<storenode>"+x+"</storenode>"
+
       s = openconn(ip, 63157)
-      s.send("<storenode>"+x+"</storenode>")
+      s.send("<storenode>"+x+"</storenode>") #Sends the whole file to all nodes on the network. Let's measure speed on this.
       s.close()
-def addToNodeList(message, sockobj):
-  ##################  APPEND EACH PASSED NODE IP AND ITS DESIGNATED SENSOR TO THE NODE LIST FILE  ################## 
-  myfileobject = open("nodes.txt","w")  #Open nodes.txt for appending all of the nodes that are sent from the super-node.
-  sensor = find_between(message, "<sensor>", "</sensor>")
-  ip = find_between(message, "<ip>", "</ip>")
-  message = "<ip>"+ip+"</ip>"+"<sensor>"+sensor+"</sensor>"
-  if(ip==""):
-    print "IP is blank"  #Ignore IP if it is blank... May just be an error from creating new lines.
-  print >> myfileobject, message+"\n"  #Write each IP to the file.
-  myfileobject.close()  #Close the file.
-
-
-  
-  ##################  SEND ALL NODES THE IP LIST FILE  ################## 
-  sockobj.send("REGISTER OK") #Sends an REGISTER OK message to acknowledge.
-  ins = open("nodes.txt", "r")  #Open the nodes.txt file for reading.
-  listOfNodes = ins.readlines()  #Read each line into an array.
-  nodes = []
-  for line in listOfNodes:
-    if line != "\n":
-      nodes.append(line)
-
-  for ip in nodes:
-
-    mes = "<storenode>"+str(ip)+"</storenode>"  #We want to tell all nodes on the network to store the list of ips and their corresponding sensor type. This is set by sending a <storenode> command.
-    if ip=="\n":  #If one of the IPs is blank, skip it.
-      mes=""
-    if mes=="": #Redundant. Remove ASAP
-      print "Ignoring blank message."
-    else:
-      indIP = find_between(mes, "<ip>", "</ip>")
-      sendIPsToNodes(sockobj, indIP, find_between(mes, "<storenode>", "</storenode>"))
-      #Call sendIPToNodes passing the whole file and the ip address.  
-  #sendIPsToNodes(ins, sockobj)  #Read each IP from the nodes.txt file and send them the request to store each IP on that list. This allows for each individual node to have the most updated version of IPs.
-#WHAT I NEED TO FIX
-#1. SUPER-NODE SHOULD NOT OVER-WRITE TO ITS NODES.TXT FILE. IT MUST APPEND. IN THE REGISTER COMMAND, MAKE SURE TO APPEND TO FILE, NOT WRITE.
-#2. NODES ONLY APPEND TO FILE. 
-
-
-def sendIPsToNodes(sockobj, ip, nodeFile):
-  print nodeFile
-  s = openconn(ip, 63157)
-  s.send("<storenode>"+nodeFile+"</storenode>")
-  s.close()
-
 
 
 def checkIfBootstraper():
