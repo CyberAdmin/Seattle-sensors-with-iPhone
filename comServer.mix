@@ -1,0 +1,322 @@
+"""
+	PLEASE RUN 
+		python repypp.py comServer.mix cServer.repy 
+	THEN RUN cServer.repy ON THE VESSEL.
+
+	THIS P2P NETWORK IS COMPRISED OF NODES AND SUPER-NODES. NODES AND SUPER-NODES BOTH SHARE THE SAME JOB OF
+	SHARING AND QUERYING SENSOR DATA WHEN NEEDED, HOWEVER SUPER-NODES ARE INCHARGE OF ACTIVATING NEW NODES TO
+	THE NETWORK. FURTHERMORE, SUPER-NODES CONTAIN A LIST OF ALL NODES IN THE NETWORK AND DISTRIBUTE THAT LIST
+	TO ALL NODES.
+
+	
+
+
+
+
+"""
+include xmlparse.repy
+include sockettimeout.repy		
+def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
+  message = sockobj.recv(10000000)  #Recieve bytes.
+  """
+  <nodename>name</nodename><status>REQUEST:RESPONSE</status><nodeIP>XXX.XXX.XXX.XXX</nodeIP>
+  ALL NODE COMMUNICATION STARTS WITH <nodename>
+  SCENARIO:
+	1. VESSEL1 SAYS: "WHO HAS X SENSOR DATA?" <nodename>VESSEL1</nodename><status>REQUEST</status><nodeIP>ves.sel.1ip.me</nodeIP><message>X</message>
+	2. VESSEL2 SAYS: "I DO! HERE IS MY X DATA FILE! <nodename>VESSEL2</nodename><status>RESPONSE</status><nodeIP>ves.sel.2ip.me</nodeIP><message>data.txt</message>
+	3. VESSEL1 SAYS: "THANKS!" Save data.txt to tmp.txt for further search of the file to analyze for specific time and location (filtration parameters)
+
+  """
+
+  """
+  AVAILABLE COMMANDS THAT CAN BE SENT TO THE NODES:
+  1. <nodename><status></status><nodeIP></nodeIP><message></message></nodename>  =To connect to a vesel with either a request or response to some sensor data. This is 2-way communication.
+  2. <iWant><sensor></sensor><parameters></parameters></iWant>  =iPhone wants some sensor value from the node with the given parameters. The return is the tmp.txt file from this node.
+  3. <?xml>  =This is the SensorML that is sent from the iPhone to this node vessel to store in the data.txt file. If some node wants that, it requests is with (1) and is saved to the tmp.txt on their vessel.
+  4. PING  =A ping command that is sent to a super-node to check if it is alive. This returns PONG if super-node, NOPE if not a super-node, and TIMEOUT if the socket times out.
+  5. PONG  =A response to some ping command that is sent from a node to a super-node. If the vessel recieving the ping command is a super-node, it then responds with PONG. If it isn't, then it responds with NOPE.
+  6. <REGISTER>  =A new node sends this command to a super-node and the super-node registers the new device and it's corresponding sensor by writing its IP and it's corresponding sensor to the nodes.txt.
+  7. <storenode>  =Everytime a new node joins the network, the super-node informs all nodes on the same network that a new node has joined by sending its IP and corresponding sensor type. This command applies only applys to nodes because the super-node always has the most updated list of nodes on the network.
+  8. DEFAULT  =If anything other than the above is sent to any node, it is counted as an "Are you there (AYT)" request and thus if the node is alive, it responds with "HERE!".
+
+
+  """
+  if(message.startswith("<nodename>")):  #We are connected to a vessel.
+    print "Connected to node."
+
+      
+    status = find_between(message, "<status>", "</status>")  #Checks the status of the incoming packet.
+    print status
+    if (status == "REQUEST"):  #If an incoming packet is a request, we first check if the requested sensor type matches our sensor, then if this is true, we respond with our data.txt.
+      if(find_between(message, "<message>", "</message>") == mycontext['my_sensor']):
+				print "Node request from > "+ find_between(message, "<nodeIP>", "</nodeIP>")
+				newfileobject = file("data.txt","r")
+				sockobj.send("<nodename>"+mycontext['my_name']+"</nodename><status>RESPONSE</status><nodeIP>"+getmyip()+"</nodeIP><message>"+newfileobject.read()+"</message>")   
+				newfileobject.close()  #Cleanup
+      else:  #If the requested sensor type does not match our attached sensor, then inform the requester that we don't ave the data.
+				print "Sorry, I don't have your data."
+				sockobj.send("Sorry, I don't have your data.")
+    else:   #If the incoming packet is a response, then we are being responded with our requested sensor type.
+      print "Node response from > "+ find_between(message, "<nodeIP>", "</nodeIP>")
+      saveToTMP(message)  #Save the responded sensor data from our request to the tmp file.
+      """
+				PROCEDURE:
+				DOWNLOAD THE INCOMING FILE AND SAVE IT TO tmp.txt
+				CALL FUNCTION TO ANALYZE OR USE THE TMP.TXT FILE FOR SEARCHING FOR THE SENSOR.
+				DELETE TMP.TXT 
+      """
+  elif(message.startswith("<iWant>")):
+		requestedSensor = find_between(message, "<sensor>", "</sensor>")
+		print "iPhone wants: "+find_between(message, "<sensor>", "</sensor>")
+		d = open("nodes.txt", "r")
+		nodes = []
+		for line in d:
+			if line!="\n":
+				nodes.append(line)
+				if find_between(line, "<sensor>", "</sensor>") == requestedSensor:
+					print "I found your requested sensor! "+ find_between(line, "<ip>", "</ip>")
+					so = openconn(find_between(line, "<ip>", "</ip>"),63157)   
+
+					so.send("<nodename>Vessel</nodename><status>REQUEST</status><nodeIP>"+getmyip()+"</nodeIP><message>"+requestedSensor+"</message>")
+					resp = so.recv(100000)
+					print resp
+					saveToTMP(resp)
+	#Check file list to see who has X. x
+	#Return the IP who does. x
+	#Send a REQUEST object with message X x
+	#Returns the whole file which is saved to tmp.txt x
+	#Push tmp.txt to iPhone.
+	#create a socket connection to the corresponding node on the list that has that specific sensor.
+  elif(message.startswith("<?xml")):  #We are connected to an iPhone that is sending us sensor data..
+    print "Connected to iPhone."
+    try:
+      myfileobject = open("data.txt","a")  #Open data.txt for appending.
+      print >> myfileobject, message  #Write the SML message to the myfileobject.
+      myfileobject.close()  #Cleanup
+      print "File open is a success."
+      #my_sensor
+      mycontext['my_sensor'] = find_between(message, "<swe:field name='sensorType'>", "</swe:field name='sensorType'>")
+      #print mycontext['my_sensor']
+      #my_name
+      mycontext['my_name'] = find_between(message, "<swe:field name='deviceName'>", "</swe:field name='deviceName'>")
+      #print mycontext['my_name']
+      #my_lat
+      mycontext['my_lat'] = find_between(message, "<swe:field name='latitude'>", "</swe:field name='latitude'>")
+      #print mycontext['my_lat']
+      #my_long
+      mycontext['my_long'] = find_between(message, "<swe:field name='longitude'>", "</swe:field name='longitude'>")
+      #print mycontext['my_long']
+      #my_battery
+      mycontext['my_battery'] = find_between(message, "<swe:field name='batteryLevel'>", "</swe:field name='batteryLevel'>")
+      #print mycontext['my_battery']
+      #my_time
+      mycontext['my_time'] = find_between(message, "<swe:field name='timeStamp'>", "</swe:field name='timeStamp'>")
+      #print mycontext['my_time']
+      #my_sensorVal
+      mycontext['my_sensorVal'] = find_between(message, "<swe:field name='sensorValue'>", "</swe:field name='sensorValue'>")
+      #print mycontext['my_sensorVal'];
+      sockobj.send("Success.\n")
+    except:
+      print "File open failed."  #Something happend. Possibly a file write error. However, iPhone learns about this and does something with this error.
+      sockobj.send("Fail.\n")
+
+  elif(message.startswith("PING")):
+    IAmBoostraper(sockobj)  #If we recieve a PING request, this means that some node is trying to check if the super node is alive. If so, then we, the super-node respond with a PONG command.
+  elif(message.startswith("PONG")):
+    checkIfBootstraper()  #If we recieve a PONG response, then this means that a super-node has confirmed that it is successfully alive.
+  elif(message.startswith("<REGISTER>")):
+  		
+    if getmyip()==mycontext['primary']:  #Only super-nodes can register a new node to the network.
+      #addToNodeList(message, sockobj)  #Write the vessel's ip address and its corresponding sensor and tell every node about it.
+      obj = open("nodes.txt", "a")
+      print >> obj, message
+      obj.close()
+      pushToAllNodes(sockobj)
+    else:
+      sockobj.send("Error: You must register with a super node.")
+  elif(message.startswith("<storenode>")):  #If we recieve a storenode command, then we must store the passed node's IP address and its corresponding sensor.
+    node = find_between(message, "<storenode>", "</storenode>")
+    print node
+    """if find_between(node, "<ip>", "</ip>") == getmyip():  #ERROR: THIS DOESN'T SEEM TO WORK :( If the problem persits, then just send the whole file and when reading, just ignore ourselves.
+      print "My IP will be ommitted from the list."  #If we are registering ourselves, omit.
+      node = "" """
+    f = open("nodes.txt","w")  #Just write all nodes to nodes.txt
+    print >> f, node  #Print to nodes.txt file
+    #Implement a way to distribute this whole file to every node on the network. 
+  else:
+    print "AYT REQUEST!"  #If we get something we don't like, then just take it as an AYT request and respond with, yes I'm here! This is like ping, but only for nodes.
+    sockobj.send('Here!')
+  stopcomm(thiscommhandle)
+
+def pushToAllNodes(sockobj):
+  sockobj.send("REGISTER OK") #Sends an REGISTER OK message to acknowledge.
+  ins = open("nodes.txt", "r") #Open the nodes.txt file for reading.
+  x = ins.read()
+  ins.close()
+  lol = open("nodes.txt", "r")
+  listOfNodes = lol.readlines()
+  lol.close()
+
+  nodes = []
+  for line in listOfNodes:
+    if line != "\n":  #Add all IPs to the nodes array and exclude any new line commands.
+      nodes.append(find_between(line, "<ip>", "</ip>"))
+      print "IP: "+find_between(line, "<ip>", "</ip>")
+  for ip in nodes:
+    if ip=="\n": #Redundant. Remove ASAP
+      print "Ignoring blank message."
+    else:
+
+      s = openconn(ip, 63157)
+      s.send("<storenode>"+x+"</storenode>")
+      s.close()
+"""def addToNodeList(message, sockobj):
+  ##################  APPEND EACH PASSED NODE IP AND ITS DESIGNATED SENSOR TO THE NODE LIST FILE  ################## 
+  myfileobject = open("nodes.txt","w")  #Open nodes.txt for appending all of the nodes that are sent from the super-node.
+  sensor = find_between(message, "<sensor>", "</sensor>")
+  ip = find_between(message, "<ip>", "</ip>")
+  message = "<ip>"+ip+"</ip>"+"<sensor>"+sensor+"</sensor>"
+  if(ip==""):
+    print "IP is blank"  #Ignore IP if it is blank... May just be an error from creating new lines.
+  print >> myfileobject, message+"\n"  #Write each IP to the file.
+  myfileobject.close()  #Close the file.
+
+
+  
+  ##################  SEND ALL NODES THE IP LIST FILE  ################## 
+  sockobj.send("REGISTER OK") #Sends an REGISTER OK message to acknowledge.
+  ins = open("nodes.txt", "r")  #Open the nodes.txt file for reading.
+  listOfNodes = ins.readlines()  #Read each line into an array.
+  nodes = []
+  for line in listOfNodes:
+    if line != "\n":
+      nodes.append(line)
+
+  for ip in nodes:
+
+    mes = "<storenode>"+str(ip)+"</storenode>"  #We want to tell all nodes on the network to store the list of ips and their corresponding sensor type. This is set by sending a <storenode> command.
+    if ip=="\n":  #If one of the IPs is blank, skip it.
+      mes=""
+    if mes=="": #Redundant. Remove ASAP
+      print "Ignoring blank message."
+    else:
+      indIP = find_between(mes, "<ip>", "</ip>")
+      sendIPsToNodes(sockobj, indIP, find_between(mes, "<storenode>", "</storenode>"))
+      #Call sendIPToNodes passing the whole file and the ip address.  
+  #sendIPsToNodes(ins, sockobj)  #Read each IP from the nodes.txt file and send them the request to store each IP on that list. This allows for each individual node to have the most updated version of IPs.
+#WHAT I NEED TO FIX
+#1. SUPER-NODE SHOULD NOT OVER-WRITE TO ITS NODES.TXT FILE. IT MUST APPEND. IN THE REGISTER COMMAND, MAKE SURE TO APPEND TO FILE, NOT WRITE.
+#2. NODES ONLY APPEND TO FILE. 
+
+"""
+def sendIPsToNodes(sockobj, ip, nodeFile):
+  print nodeFile
+  s = openconn(ip, 63157)
+  s.send("<storenode>"+nodeFile+"</storenode>")
+  s.close()
+
+
+
+def checkIfBootstraper():
+  print 'CheckIfBootstraper'   #Unimplemented/Deprecated
+
+#Makeshift XML parser.
+def find_between( s, first, last ):
+    
+  start = s.index( first ) + len( first )
+  end = s.index( last, start )
+  return s[start:end]
+
+def saveToTMP(message):  #This saves the requested sensor data to the local tmp.txt file for pushing the results to the iPhone.
+
+  myfileobject = open("tmp.txt","w")
+  
+  print >> myfileobject, message
+  #PUSH THE TMP TO iPhone
+
+
+def IAmBoostraper(socketobject):  #This is intended to check if the ping is a bootstraper... Let's fix this later.
+  
+  if (mycontext['primary'] == getmyip()):
+    print 'I am Bootstraper with IP: '+getmyip()
+    socketobject.send("PONG\n")		
+  else:
+    print 'I am not the bootstraper. '
+    socketobject.send("NOPE\n")
+    """if pingNode(mycontext['primary']) == 'TIMEOUT':
+      print "Node at: "+mycontext['primary']+" is off. Trying secondary..."
+      if pingNode(mycontext['secondary']) == 'TIMEOUT':
+        print "Node at: "+mycontext['secondary']+" is dead. Trying fallback..."
+        if pingNode(mycontext['fallback']) == 'TIMEOUT':
+          print "Node at: "+mycontext['fallback']+" is dead. Returning..."
+        else:
+          print "Using fallback node as bootstraper."
+          mycontext['bootstrap'] = mycontext['secondary']
+      else:
+        print "Using secondary node as bootstraper."
+        mycontext['bootstrap'] = mycontext['secondary']
+    else:
+      print "Using primary node as bootstraper."
+      mycontext['bootstrap'] = mycontext['primary']"""
+      
+
+    #TO-DO: FINISH THE BOOTSTRAPER KEEP-ALIVE PING. IT SHOULD PING THE SERVER EVERY TWO HOURS OR WHEN IT IS INACTIVE. ALSO, CREATE 2 MORE CALL ARGS TO ALLOW FOR PRIMARY, SECONDARY, AND FALLBACK   			BOOTSTRAPERS. We have a problem with the pinging. If there is a timeout, I need to catch the exception. Why aren't I catching it?
+    #JUST IN CASE OF A PROBLEM IN ONE OF THE BOOTSTRAPER NODES. 
+    #AGAIN, THE PURPOSE OF A BOOTSTRAPER NODE IS TO MAINTAIN A LIST OF VESSEL IPs AND THEIR CORRESPONDING SENSOR. THAT LIST NEEDS TO BE PUSHED TO ALL VESSELS AS SOON AS A NODE JOINS THE NETWORK. 
+    #TO FINISH THIS PROGRAM, I NEED TO DO:
+    #1. FINISH BOOTSTRAPER
+    #2. CREATE A WAY TO SEE HOW DATA IS BEING TRANSFERRED BETWEEN NODES AND THEIR IPHONES.
+		#3. Viz on graphs?
+def pingNode(ip):  #Pings any super-node for a keep-alive command. Make a way to check if there is a socket timeout.
+    # open a connection to the bootstrap
+    try:
+      data = sendmess(ip,63157, "PONG") 
+      print data;
+    except Exception, e:
+      print str(e)
+  
+if callfunc == 'initialize':  #Main call func.
+
+  if len(callargs) > 4:
+    raise Exception("Too many call arguments")
+
+  # Running remotely:
+  # whenever this vessel gets a connection on its IPaddress:Clearinghouseport it'll call hello
+  elif len(callargs) == 4:
+    mycontext['primary'] = callargs[1]
+    print "Primary bootstraper IP: "+mycontext['primary']
+    if mycontext['primary'] == getmyip():
+      m = open("nodes.txt","w")
+      print >>m, "<ip>"+getmyip()+"</ip><sensor>x</sensor>\n"
+      m.close() 
+    mycontext['secondary'] = callargs[2]
+    print "Secondary bootsraper IP: "+mycontext['secondary']
+    mycontext['fallback'] = callargs[3]
+    print "Fallback bootstrap IP: "+mycontext['fallback']
+    
+    port = int(callargs[0])
+    ip = getmyip()
+    print " _______  _______  _______ __________________ _        _______  _______  _______  _        _______  _______  _______  _______ "
+    print "(  ____ \(  ____ \(  ___  )\__   __/\__   __/( \      (  ____ \(  ____ \(  ____ \( (    /|(  ____ \(  ___  )(  ____ )(  ____ \ "
+    print "| (    \/| (    \/| (   ) |   ) (      ) (   | (      | (    \/| (    \/| (    \/|  \  ( || (    \/| (   ) || (    )|| (    \/"
+    print "| (_____ | (__    | (___) |   | |      | |   | |      | (__    | (_____ | (__    |   \ | || (_____ | |   | || (____)|| (_____ "
+    print "(_____  )|  __)   |  ___  |   | |      | |   | |      |  __)   (_____  )|  __)   | (\ \) |(_____  )| |   | ||     __)(_____  )"
+    print "      ) || (      | (   ) |   | |      | |   | |      | (            ) || (      | | \   |      ) || |   | || (\ (         ) |"
+    print "/\____) || (____/\| )   ( |   | |      | |   | (____/\| (____/\/\____) || (____/\| )  \  |/\____) || (___) || ) \ \__/\____) |"
+    print "\_______)(_______/|/     \|   )_(      )_(   (_______/(_______/\_______)(_______/|/    )_)\_______)(_______)|/   \__/\_______)"
+
+  else:
+    port = 63157
+    ip = '127.0.0.1'
+  
+  
+  listencommhandle = waitforconn(ip,port,hello)
+
+
+
+
+
+
+
+
+
