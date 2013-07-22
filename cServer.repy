@@ -862,9 +862,9 @@ def find_between( s, first, last ):
 
 def saveToTMP(message):  #This saves the requested sensor data to the local tmp.txt file for pushing the results to the iPhone.
 
-  myfileobject = open("tmp.txt","w")
+  myfileobject = open("tmp.txt","a")
   
-  print >> myfileobject, message
+  print >> myfileobject, find_between(message, "<message>", "</message>")
   #PUSH THE TMP TO iPhone
 
 
