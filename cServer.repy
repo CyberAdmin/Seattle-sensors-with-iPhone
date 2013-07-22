@@ -760,6 +760,7 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
 					resp = so.recv(100000)
 					print resp
 					saveToTMP(resp)
+					sendTMPFile(sockobj)
 	#Check file list to see who has X. x
 	#Return the IP who does. x
 	#Send a REQUEST object with message X x
@@ -866,8 +867,12 @@ def saveToTMP(message):  #This saves the requested sensor data to the local tmp.
   
   print >> myfileobject, find_between(message, "<message>", "</message>")
   #PUSH THE TMP TO iPhone
-
-
+  myfileobject.close()
+def sendTMPFile(sockobj):
+  sensorData = open("tmp.txt", "r")
+  sockobj.send(sensorData.read())
+  print "Sent sensor data to iPhone"
+  sensorData.close()
 def IAmBoostraper(socketobject):  #This is intended to check if the ping is a bootstraper... Let's fix this later.
   
   if (mycontext['primary'] == getmyip()):
@@ -920,7 +925,7 @@ if callfunc == 'initialize':  #Main call func.
     print "Primary bootstraper IP: "+mycontext['primary']
     if mycontext['primary'] == getmyip():
       m = open("nodes.txt","w")
-      print >>m, "<ip>"+getmyip()+"</ip><sensor>x</sensor>\n"
+      print >>m, "<ip>"+getmyip()+"</ip><sensor>Potholes</sensor>\n"
       m.close() 
     mycontext['secondary'] = callargs[2]
     print "Secondary bootsraper IP: "+mycontext['secondary']
