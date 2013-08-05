@@ -9,7 +9,6 @@
 #import "requestViewController.h"
 #import "NodeConnection.h"
 #import "MenuViewController.h"
-#import "MapViewController.h"
 @interface requestViewController ()
 
 @end
@@ -36,10 +35,7 @@
     output.text = [nc receiveData];
     
 }
--(IBAction)map:(id)sender{
-    MapViewController *mvc = [[MapViewController alloc] initWithNibName:@"MapViewController" bundle:nil];
-    [self presentViewController:mvc animated:YES completion:NULL];
-}
+
 -(IBAction)back{
     MenuViewController *mvc = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
     [self presentViewController:mvc animated:YES completion:NULL];

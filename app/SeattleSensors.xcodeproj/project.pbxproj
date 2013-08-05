@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F1412A217A711AD00F3FE95 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F1412A117A711AD00F3FE95 /* GoogleMaps.framework */; };
 		1F16E3FA1781DEA9003EEC3F /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F16E3F91781DEA8003EEC3F /* CoreBluetooth.framework */; };
 		1F36623E179063D000A752B7 /* SensorPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F36623C1790637F00A752B7 /* SensorPickerViewController.m */; };
 		1F36624617906BDA00A752B7 /* submitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F36624317906B3900A752B7 /* submitViewController.m */; };
@@ -52,8 +51,6 @@
 		1F7C11DE17A6FF0000321C43 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7C11DD17A6FF0000321C43 /* libc++.dylib */; };
 		1F7C11E017A6FF0B00321C43 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7C11DF17A6FF0B00321C43 /* libicucore.dylib */; };
 		1F7C11E217A6FF2200321C43 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F7C11E117A6FF2200321C43 /* OpenGLES.framework */; };
-		1F7C11E617A7001B00321C43 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F7C11E417A6FFB300321C43 /* MapViewController.m */; };
-		1F7C11E717A7009A00321C43 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F7C11E517A6FFB300321C43 /* MapViewController.xib */; };
 		1F94EB1E17554D2A002269B6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB1D17554D2A002269B6 /* UIKit.framework */; };
 		1F94EB2017554D2A002269B6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB1F17554D2A002269B6 /* Foundation.framework */; };
 		1F94EB2217554D2A002269B6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB2117554D2A002269B6 /* CoreGraphics.framework */; };
@@ -80,18 +77,7 @@
 		1FF3045717A6BD1C00329363 /* FastSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FF3045617A6BD1C00329363 /* FastSocket.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		1F581C0817A6E7280070B804 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1F581C0417A6E7280070B804 /* OBD2Kit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2AAC07E0554694100DB518D;
-			remoteInfo = OBD2Kit;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		1F1412A117A711AD00F3FE95 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		1F16E3F91781DEA8003EEC3F /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		1F36623B1790637F00A752B7 /* SensorPickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SensorPickerViewController.h; sourceTree = "<group>"; };
 		1F36623C1790637F00A752B7 /* SensorPickerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SensorPickerViewController.m; sourceTree = "<group>"; };
@@ -117,7 +103,6 @@
 		1F55556617A89F5500608B4C /* iSeattle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iSeattle-Info.plist"; sourceTree = "<group>"; };
 		1F55556817A89F5500608B4C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1F55556A17A89F5500608B4C /* iSeattle-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iSeattle-Prefix.pch"; sourceTree = "<group>"; };
-		1F581C0417A6E7280070B804 /* OBD2Kit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OBD2Kit.xcodeproj; path = "../../../Downloads/OBD2Kit-master 3/OBD2Kit.xcodeproj"; sourceTree = "<group>"; };
 		1F581C0D17A6E7C80070B804 /* FLSimScanTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FLSimScanTool.h; sourceTree = "<group>"; };
 		1F581C0E17A6E7C80070B804 /* FLSimScanTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLSimScanTool.m; sourceTree = "<group>"; };
 		1F581C1017A6E7C80070B804 /* ELM327.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ELM327.h; sourceTree = "<group>"; };
@@ -165,9 +150,6 @@
 		1F7C11DD17A6FF0000321C43 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
 		1F7C11DF17A6FF0B00321C43 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		1F7C11E117A6FF2200321C43 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		1F7C11E317A6FFB300321C43 /* MapViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
-		1F7C11E417A6FFB300321C43 /* MapViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
-		1F7C11E517A6FFB300321C43 /* MapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		1F94EB1A17554D2A002269B6 /* SeattleSensors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeattleSensors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F94EB1D17554D2A002269B6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1F94EB1F17554D2A002269B6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -230,7 +212,6 @@
 				1F7C11DC17A6FEF200321C43 /* ImageIO.framework in Frameworks */,
 				1F7C11DA17A6FEE900321C43 /* GLKit.framework in Frameworks */,
 				1F6A0C091777C3C600FE6BE2 /* CoreLocation.framework in Frameworks */,
-				1F1412A217A711AD00F3FE95 /* GoogleMaps.framework in Frameworks */,
 				1F7C11D817A6FED000321C43 /* CoreText.framework in Frameworks */,
 				1F7C11D617A6FEC600321C43 /* CoreData.framework in Frameworks */,
 				1FE65EBA17A6E484004373C5 /* ExternalAccessory.framework in Frameworks */,
@@ -291,14 +272,6 @@
 				1F55556A17A89F5500608B4C /* iSeattle-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		1F581C0517A6E7280070B804 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1F581C0917A6E7280070B804 /* libOBD2Kit.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		1F581C0A17A6E7C80070B804 /* Classes */ = {
@@ -398,7 +371,6 @@
 		1F94EB1117554D2A002269B6 = {
 			isa = PBXGroup;
 			children = (
-				1F581C0417A6E7280070B804 /* OBD2Kit.xcodeproj */,
 				1FF3045017A1AB0900329363 /* Reveal.framework */,
 				1F94EB5317555FE6002269B6 /* CFNetwork.framework */,
 				1F94EB5117555FE1002269B6 /* Security.framework */,
@@ -448,7 +420,6 @@
 		1F94EB2317554D2A002269B6 /* SeattleSensors */ = {
 			isa = PBXGroup;
 			children = (
-				1F1412A117A711AD00F3FE95 /* GoogleMaps.framework */,
 				1F581C0A17A6E7C80070B804 /* Classes */,
 				1FD459B8179DABD800D5DC5C /* ding.mp3 */,
 				1FD459B0179D9D8F00D5DC5C /* Images */,
@@ -475,9 +446,6 @@
 				1F36624B17906CEB00A752B7 /* requestViewController.m */,
 				1F36624C17906CEB00A752B7 /* requestViewController.xib */,
 				1F94EB2417554D2A002269B6 /* Supporting Files */,
-				1F7C11E317A6FFB300321C43 /* MapViewController.h */,
-				1F7C11E417A6FFB300321C43 /* MapViewController.m */,
-				1F7C11E517A6FFB300321C43 /* MapViewController.xib */,
 			);
 			path = SeattleSensors;
 			sourceTree = "<group>";
@@ -587,12 +555,6 @@
 			mainGroup = 1F94EB1117554D2A002269B6;
 			productRefGroup = 1F94EB1B17554D2A002269B6 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 1F581C0517A6E7280070B804 /* Products */;
-					ProjectRef = 1F581C0417A6E7280070B804 /* OBD2Kit.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				1F94EB1917554D2A002269B6 /* SeattleSensors */,
@@ -600,16 +562,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		1F581C0917A6E7280070B804 /* libOBD2Kit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libOBD2Kit.a;
-			remoteRef = 1F581C0817A6E7280070B804 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1F55555F17A89F5500608B4C /* Resources */ = {
@@ -637,7 +589,6 @@
 				1F94EB3417554D2A002269B6 /* Default-568h@2x.png in Resources */,
 				1F44444E1778C2DC00E5A1B7 /* AccelerometerViewController.xib in Resources */,
 				1F94EB3D17554D2A002269B6 /* ViewController_iPad.xib in Resources */,
-				1F7C11E717A7009A00321C43 /* MapViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -655,7 +606,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1F7C11E617A7001B00321C43 /* MapViewController.m in Sources */,
 				1F36624917906C9200A752B7 /* MenuViewController.m in Sources */,
 				1F581C3A17A6E7C80070B804 /* GoLinkCommand.m in Sources */,
 				1F36624617906BDA00A752B7 /* submitViewController.m in Sources */,

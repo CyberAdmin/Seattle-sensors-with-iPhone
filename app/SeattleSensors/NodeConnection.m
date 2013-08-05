@@ -238,4 +238,8 @@
                         }
     return result;
 }
+-(void)sendRawDataFromFile:(NSString *)filename{
+    
+    [self sendRawData:[self readFile:filename]];
+}
 @end

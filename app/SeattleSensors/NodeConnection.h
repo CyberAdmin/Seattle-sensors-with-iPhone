@@ -55,4 +55,6 @@
 -(NSString *)findBetween:(NSString *)message first:(NSString *)begin last:(NSString *)end; //Make-shift XML parser to find the string between two delimeters.
 
 -(NSString *)sendRawDataWithResponse:(NSString *)data;  //Sends raw data with the expectation of a response.
+
+-(void)sendRawDataFromFile:(NSString *)filename; //Sends raw data form file.
 @end
