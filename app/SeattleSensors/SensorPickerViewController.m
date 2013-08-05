@@ -8,6 +8,7 @@
 
 #import "SensorPickerViewController.h"
 #import "MenuViewController.h"
+#import "CarPickerViewController.h"
 @interface SensorPickerViewController ()
 
 @end
@@ -48,8 +49,15 @@
     NSUserDefaults *nodeIPDefault = [NSUserDefaults standardUserDefaults];
     [nodeIPDefault setObject:sensorType.text forKey:@"SensorType"];
     //Upload this to your node.
-    MenuViewController *mvc = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
-    [self presentViewController:mvc animated:YES completion:NULL];
+    /*MenuViewController *mvc = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
+    [self presentViewController:mvc animated:YES completion:NULL];*/
+    if([sensorType.text isEqualToString:@"Vehicles"]){
+        CarPickerViewController *cpv = [[CarPickerViewController alloc] initWithNibName:@"CarPickerViewController" bundle:nil];
+        [self presentViewController:cpv animated:YES completion:NULL];
+        
+        [cpv parseModels];
+
+    }
     
 }
 - (void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

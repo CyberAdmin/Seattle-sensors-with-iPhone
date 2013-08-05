@@ -15,7 +15,9 @@
     
 }
 @property (nonatomic, retain)UIPickerView *makePickerView;
+@property (nonatomic, retain)NSString *brand;
+@property (nonatomic, retain)NSString *make;
 -(void)parseModels:(NSString *)model;
-
+-(IBAction)next:(id)sender;
 
 @end

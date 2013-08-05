@@ -7,15 +7,18 @@
 //
 
 #import "ModelViewController.h"
-
+#import "MenuViewController.h"
 @interface ModelViewController ()
 
 @end
 
 @implementation ModelViewController
-@synthesize makePickerView;
+@synthesize makePickerView, brand, make;
 
 -(void)parseModels:(NSString *)model{
+    brand = model;
+    model = [model stringByReplacingOccurrencesOfString:@" " withString:@"+"];
+
     NSLog(@"Looking for: %@", model);
     // Create new SBJSON parser object
     SBJsonParser *parser = [[SBJsonParser alloc] init];
@@ -47,17 +50,22 @@
     for (x in make){
         NSLog(@"%@",[x valueForKey:@"name"]);
         modelsString = [NSString stringWithFormat:@"%@", [x valueForKey:@"name"]];
+
         [makeArray addObject:[NSString stringWithFormat:@"%@", [x valueForKey:@"name"]]];
     }
     NSLog(@"THIS IS X: %@",x);
     modelsString = [modelsString stringByReplacingOccurrencesOfString:@")" withString:@""];
     modelsString = [modelsString stringByReplacingOccurrencesOfString:@"(" withString:@""];
-    
+    modelsString = [modelsString stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+    modelsString = [modelsString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     NSLog(@"THIS IS MODELSTRING: %@", modelsString);
 
     carPickerArray = [modelsString componentsSeparatedByString:@","];
 
-    
+    for(NSString *a in carPickerArray){
+        NSLog(@"%@",[a stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]);
+              
+    }
     
 }
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -75,14 +83,14 @@
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
     //set item per row
-    return [carPickerArray objectAtIndex:row];
+    return [[carPickerArray objectAtIndex:row] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 
 {
     
     NSLog(@"Selected: %@", [carPickerArray objectAtIndex:row]);
-    
+    make = [carPickerArray objectAtIndex:row];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -105,5 +113,11 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+-(IBAction)next:(id)sender{
+    MenuViewController *m = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
+    [self presentViewController:m animated:YES completion:NULL];
+    NSLog(@"%@", brand);
+    NSLog(@"%@", make);
+    //Create method to get make and model and compose a serialized string of what we have.
+}
 @end

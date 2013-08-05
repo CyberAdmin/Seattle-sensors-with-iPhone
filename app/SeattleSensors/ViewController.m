@@ -57,10 +57,6 @@
 	// Do any additional setup after loading the view, typically from a nib.
 }
 -(void)viewDidAppear:(BOOL)animated{
-    CarPickerViewController *cpv = [[CarPickerViewController alloc] initWithNibName:@"CarPickerViewController" bundle:nil];
-    [self presentViewController:cpv animated:YES completion:NULL];
-    
-    [cpv parseModels];
 }
 - (void)didReceiveMemoryWarning
 {
