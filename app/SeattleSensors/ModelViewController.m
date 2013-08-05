@@ -13,12 +13,12 @@
 @end
 
 @implementation ModelViewController
-@synthesize makePickerView, brand, make;
+@synthesize makePickerView;
 
 -(void)parseModels:(NSString *)model{
-    brand = model;
+    brand = [model stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     model = [model stringByReplacingOccurrencesOfString:@" " withString:@"+"];
-
+    [self setBrand:brand];
     NSLog(@"Looking for: %@", model);
     // Create new SBJSON parser object
     SBJsonParser *parser = [[SBJsonParser alloc] init];
@@ -90,7 +90,8 @@
 {
     
     NSLog(@"Selected: %@", [carPickerArray objectAtIndex:row]);
-    make = [carPickerArray objectAtIndex:row];
+    model = [carPickerArray objectAtIndex:row];
+    [self setModel:model];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -114,10 +115,37 @@
     // Dispose of any resources that can be recreated.
 }
 -(IBAction)next:(id)sender{
-    MenuViewController *m = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
-    [self presentViewController:m animated:YES completion:NULL];
-    NSLog(@"%@", brand);
-    NSLog(@"%@", make);
+    MenuViewController *mc = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
+    [self presentViewController:mc animated:YES completion:NULL];
+    NSLog(@"NEXT: %@", brand);
+    model= [model stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSLog(@"NEXT: %@", model);
     //Create method to get make and model and compose a serialized string of what we have.
+}
+-(NSString *)brand{
+    NSLog(@"AT BRAND: %@", b);
+    return b;
+}
+-(NSString *)model{
+    NSLog(@"AT MODEL: %@", m);
+    return m;
+}
+-(void)setBrand:(NSString *)val{
+    
+    brand = val;
+    b = val;
+    NSUserDefaults *brandObject = [NSUserDefaults standardUserDefaults];
+    [brandObject setObject:b forKey:@"Brand"];
+
+    NSLog(@"setBrand: %@", b);
+}
+-(void)setModel:(NSString *)val{
+    
+    model = val;
+    m = [val stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    NSUserDefaults *modelObject = [NSUserDefaults standardUserDefaults];
+    [modelObject setObject:m forKey:@"Model"];
+
+    NSLog(@"setModel: %@", m);
 }
 @end

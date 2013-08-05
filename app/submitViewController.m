@@ -12,6 +12,7 @@
 #import "MessageComposer.h"
 #import "FLLogging.h"
 #import "FLECUSensor.h"
+#import "ModelViewController.h"
 @interface submitViewController ()
 
 @end
@@ -94,11 +95,18 @@
         NSUserDefaults *userDefaults2 = [NSUserDefaults standardUserDefaults];
         NSString *sType = [userDefaults2 objectForKey:@"SensorType"];
         NSLog(@"sType: %@", sType);
+        ModelViewController *mvc = [[ModelViewController alloc] init];
+        NSUserDefaults *brandDef = [NSUserDefaults standardUserDefaults];
+        NSString *brand = [brandDef objectForKey:@"Brand"];
+        NSUserDefaults *modelDef = [NSUserDefaults standardUserDefaults];
+        NSString *model = [modelDef objectForKey:@"Model"];
 
         MessageComposer *mc = [[MessageComposer alloc] init];
         NodeConnection *nc = [[NodeConnection alloc] init];
         [nc newConnection:[NSString stringWithFormat:@"%@", defIP]];
-        [nc sendRawData:[mc message:sType value:[NSString stringWithFormat:@"%f", yAxis]]];
+        //[nc sendRawData:[mc message:sType value:[NSString stringWithFormat:@"%f", yAxis]]];
+        [nc sendRawData:[mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sType] value:[NSString stringWithFormat:@"%f", yAxis]]];
+
     }
     //slider.value = acceleration.x;
     
@@ -257,13 +265,15 @@
 }
 -(void)pushToSeattle:(NSString *)sensorType value:(NSString *)val{
     //BIG NO NO!!! PELASE WRITE ALL OF THE DATA TO THE FILE AND THEN WHEN THERE IS ENOUGH DATA, SEND IT TO SEATTLE! DO NOT SEND EACH PID TO THE SEATTLE CLOUD AND CRASH IT LOL
+    ModelViewController *mvc = [[ModelViewController alloc] init];
+
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *defIP = [userDefaults objectForKey:@"DefaultNodeIP"];
     NSLog(@"DefIP: %@", defIP);
     MessageComposer *mc = [[MessageComposer alloc] init];
     NodeConnection *nc = [[NodeConnection alloc] init];
     [nc newConnection:[NSString stringWithFormat:@"%@", defIP]];
-    [nc sendRawData:[mc message:sensorType value:val]];
+    [nc sendRawData:[mc message:[NSString stringWithFormat:@"%@:%@-%@", mvc.brand, mvc.model, sensorType] value:val]];
     
 }
 #pragma mark -

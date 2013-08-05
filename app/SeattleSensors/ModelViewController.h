@@ -12,12 +12,18 @@
 @interface ModelViewController : UIViewController<UIPickerViewDataSource, UIPickerViewDelegate>{
     NSArray *carPickerArray;
     NSDictionary *x;
+    NSString *model;
+    NSString *brand;
+    NSString *m;
+    NSString *b;
     
 }
 @property (nonatomic, retain)UIPickerView *makePickerView;
-@property (nonatomic, retain)NSString *brand;
-@property (nonatomic, retain)NSString *make;
+
 -(void)parseModels:(NSString *)model;
 -(IBAction)next:(id)sender;
-
+-(NSString *)brand;
+-(NSString *)model;
+-(void)setBrand:(NSString *)val;
+-(void)setModel:(NSString *)val;
 @end
