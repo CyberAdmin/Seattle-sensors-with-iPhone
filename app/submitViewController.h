@@ -26,18 +26,17 @@
 	UILabel*			rpmLabel;
 	UILabel*			speedLabel;
     UILabel*            milesPerGallon;
-    UILabel* fuelLevel;
-    UILabel* TPS;
-}
 
+}
+@property (nonatomic, retain) IBOutlet UIImageView *recordIcon;
+@property (nonatomic, retain) IBOutlet UIImageView *stopIcon;
 @property (nonatomic, retain) IBOutlet UILabel* statusLabel;
 @property (nonatomic, retain) IBOutlet UILabel* scanToolNameLabel;
 @property (nonatomic, retain) IBOutlet UILabel* rpmLabel;
 @property (nonatomic, retain) IBOutlet UILabel* speedLabel;
-@property (nonatomic, retain) IBOutlet UILabel* fuelLevel;
-@property (nonatomic, retain) IBOutlet UILabel* TPS;
 @property (nonatomic, retain) IBOutlet UILabel* milesPerGallon;
-
+@property (nonatomic, retain) IBOutlet UIButton *recordButton;
+@property (nonatomic, retain) IBOutlet UIButton *stopButton;
 @property(nonatomic, retain)IBOutlet UILabel *sensorLabel;
 @property(nonatomic, retain)IBOutlet UILabel *recording;
 @property (nonatomic, retain) CLLocationManager *locationManager;

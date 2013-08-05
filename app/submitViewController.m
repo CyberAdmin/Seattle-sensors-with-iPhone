@@ -21,8 +21,12 @@
 @synthesize statusLabel;
 @synthesize scanToolNameLabel;
 @synthesize rpmLabel;
-@synthesize speedLabel, fuelLevel, TPS, milesPerGallon;
+@synthesize speedLabel, milesPerGallon, recordButton, recordIcon, stopButton, stopIcon;
 -(IBAction)record{
+    recordIcon.hidden = YES;
+    recordButton.hidden = YES;
+    stopIcon.hidden = NO;
+    stopButton.hidden = NO;
     accel = [UIAccelerometer sharedAccelerometer];
     accel.updateInterval = 0.05f;
     accel.delegate = self;
@@ -31,6 +35,10 @@
     
 }
 -(IBAction)stop{
+    stopIcon.hidden = YES;
+    stopButton.hidden = YES;
+    recordButton.hidden = NO;
+    recordIcon.hidden = NO;
     //[self dismissModalViewControllerAnimated:YES];
     accel.delegate = nil;
     recording.hidden = YES;
@@ -55,6 +63,8 @@
 {
     [super viewDidLoad];
     recording.hidden = YES;
+    stopIcon.hidden = YES;
+    stopButton.hidden = YES;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *sType = [userDefaults objectForKey:@"SensorType"];
     NSLog(@"sType: %@", sType);
@@ -177,8 +187,7 @@
         else if(response.pid == 0x2F){
             NSLog(@"Fuel level at: %@",[NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]] );
             //[self pushToSeattle:@"Fuel Level" value:[NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]]];
-            fuelLevel.text = [NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]];
-            [fuelLevel setNeedsDisplay];
+           
         }
         else if(response.pid == 0x0A){
             NSLog(@"Fuel pressure: %@", [NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]]);
@@ -190,8 +199,6 @@
             
             NSLog(@"Throttle Position: %@", [NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]]);
             //[self pushToSeattle:@"TPS" value:[NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]]];
-            TPS.text = [NSString stringWithFormat:@"%@ %@", [sensor valueStringForMeasurement1:NO], [sensor imperialUnitString]];
-            [TPS setNeedsDisplay];
         }
 		else if(response.pid == 0x0D) {
 			// Update Speed Display
@@ -292,4 +299,12 @@
 }
 
 
+- (void)viewDidUnload {
+    [self setStopIcon:nil];
+    [self setRecordIcon:nil];
+    [self setRecordButton:nil];
+    [self setRecordButton:nil];
+    [self setStopButton:nil];
+    [super viewDidUnload];
+}
 @end
