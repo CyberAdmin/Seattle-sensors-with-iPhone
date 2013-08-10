@@ -19,4 +19,5 @@
 @property(nonatomic,retain)IBOutlet UITextField *parameters;
 -(IBAction)back;
 -(IBAction)request:(id)sender;
+-(IBAction)map:(id)sender;
 @end

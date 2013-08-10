@@ -37,6 +37,11 @@
 		1F46F54917B0043F00772EF2 /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F46F53F17B0043F00772EF2 /* SBJsonWriter.m */; };
 		1F46F55217B01E7D00772EF2 /* ModelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F46F55017B01E7D00772EF2 /* ModelViewController.m */; };
 		1F46F55317B01E7D00772EF2 /* ModelViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F46F55117B01E7D00772EF2 /* ModelViewController.xib */; };
+		1F46F55517B42C2A00772EF2 /* MapBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F46F55417B42C2900772EF2 /* MapBox.framework */; };
+		1F46F55717B42DFF00772EF2 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F46F55617B42DFF00772EF2 /* libsqlite3.dylib */; };
+		1F46F55917B42EB300772EF2 /* MapBox.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F46F55817B42EB300772EF2 /* MapBox.bundle */; };
+		1F46F55D17B4325500772EF2 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F46F55C17B4324A00772EF2 /* MapViewController.xib */; };
+		1F46F55E17B4334700772EF2 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F46F55B17B4324A00772EF2 /* MapViewController.m */; };
 		1F55556317A89F5500608B4C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F55556217A89F5500608B4C /* CoreFoundation.framework */; };
 		1F55556917A89F5500608B4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F55556717A89F5500608B4C /* InfoPlist.strings */; };
 		1F581C3517A6E7C80070B804 /* FLSimScanTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F581C0E17A6E7C80070B804 /* FLSimScanTool.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -77,7 +82,6 @@
 		1F94EB3417554D2A002269B6 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F94EB3317554D2A002269B6 /* Default-568h@2x.png */; };
 		1F94EB3717554D2A002269B6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F94EB3617554D2A002269B6 /* ViewController.m */; };
 		1F94EB3D17554D2A002269B6 /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F94EB3B17554D2A002269B6 /* ViewController_iPad.xib */; };
-		1F94EB4417555F70002269B6 /* libcurl-device.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB4317555F70002269B6 /* libcurl-device.a */; };
 		1F94EB5017555FCD002269B6 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB4F17555FCD002269B6 /* libz.dylib */; };
 		1F94EB5217555FE1002269B6 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB5117555FE1002269B6 /* Security.framework */; };
 		1F94EB5417555FE6002269B6 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F94EB5317555FE6002269B6 /* CFNetwork.framework */; };
@@ -141,6 +145,12 @@
 		1F46F54F17B01E7D00772EF2 /* ModelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelViewController.h; sourceTree = "<group>"; };
 		1F46F55017B01E7D00772EF2 /* ModelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelViewController.m; sourceTree = "<group>"; };
 		1F46F55117B01E7D00772EF2 /* ModelViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ModelViewController.xib; sourceTree = "<group>"; };
+		1F46F55417B42C2900772EF2 /* MapBox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapBox.framework; sourceTree = "<group>"; };
+		1F46F55617B42DFF00772EF2 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		1F46F55817B42EB300772EF2 /* MapBox.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MapBox.bundle; sourceTree = "<group>"; };
+		1F46F55A17B4324A00772EF2 /* MapViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
+		1F46F55B17B4324A00772EF2 /* MapViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
+		1F46F55C17B4324A00772EF2 /* MapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		1F55556117A89F5500608B4C /* iSeattle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iSeattle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F55556217A89F5500608B4C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1F55556617A89F5500608B4C /* iSeattle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iSeattle-Info.plist"; sourceTree = "<group>"; };
@@ -249,9 +259,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F46F55717B42DFF00772EF2 /* libsqlite3.dylib in Frameworks */,
 				1F7C11E217A6FF2200321C43 /* OpenGLES.framework in Frameworks */,
 				1F7C11E017A6FF0B00321C43 /* libicucore.dylib in Frameworks */,
 				1F7C11DE17A6FF0000321C43 /* libc++.dylib in Frameworks */,
+				1F46F55517B42C2A00772EF2 /* MapBox.framework in Frameworks */,
 				1F7C11DC17A6FEF200321C43 /* ImageIO.framework in Frameworks */,
 				1F7C11DA17A6FEE900321C43 /* GLKit.framework in Frameworks */,
 				1F6A0C091777C3C600FE6BE2 /* CoreLocation.framework in Frameworks */,
@@ -271,7 +283,6 @@
 				1F94EB1E17554D2A002269B6 /* UIKit.framework in Frameworks */,
 				1F94EB2017554D2A002269B6 /* Foundation.framework in Frameworks */,
 				1F94EB2217554D2A002269B6 /* CoreGraphics.framework in Frameworks */,
-				1F94EB4417555F70002269B6 /* libcurl-device.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -465,6 +476,8 @@
 		1F94EB1C17554D2A002269B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1F46F55617B42DFF00772EF2 /* libsqlite3.dylib */,
+				1F46F55417B42C2900772EF2 /* MapBox.framework */,
 				1F7C11E117A6FF2200321C43 /* OpenGLES.framework */,
 				1F7C11DF17A6FF0B00321C43 /* libicucore.dylib */,
 				1F7C11DD17A6FF0000321C43 /* libc++.dylib */,
@@ -501,6 +514,7 @@
 				1F46F52A17B0043F00772EF2 /* objc */,
 				1F94EB2C17554D2A002269B6 /* AppDelegate.h */,
 				1F94EB2D17554D2A002269B6 /* AppDelegate.mm */,
+				1F46F55817B42EB300772EF2 /* MapBox.bundle */,
 				1F94EB3517554D2A002269B6 /* ViewController.h */,
 				1F94EB3617554D2A002269B6 /* ViewController.m */,
 				1F94EB3817554D2A002269B6 /* ViewController_iPhone.xib */,
@@ -524,6 +538,9 @@
 				1F46F54F17B01E7D00772EF2 /* ModelViewController.h */,
 				1F46F55017B01E7D00772EF2 /* ModelViewController.m */,
 				1F46F55117B01E7D00772EF2 /* ModelViewController.xib */,
+				1F46F55A17B4324A00772EF2 /* MapViewController.h */,
+				1F46F55B17B4324A00772EF2 /* MapViewController.m */,
+				1F46F55C17B4324A00772EF2 /* MapViewController.xib */,
 			);
 			path = SeattleSensors;
 			sourceTree = "<group>";
@@ -668,8 +685,10 @@
 				1F46F4E917AFFA7300772EF2 /* CarPickerViewController.xib in Resources */,
 				1F36624717906C2C00A752B7 /* submitViewController.xib in Resources */,
 				1F36624F179074F600A752B7 /* MenuViewController.xib in Resources */,
+				1F46F55D17B4325500772EF2 /* MapViewController.xib in Resources */,
 				1F94EB3417554D2A002269B6 /* Default-568h@2x.png in Resources */,
 				1F44444E1778C2DC00E5A1B7 /* AccelerometerViewController.xib in Resources */,
+				1F46F55917B42EB300772EF2 /* MapBox.bundle in Resources */,
 				1F94EB3D17554D2A002269B6 /* ViewController_iPad.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -688,6 +707,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F46F55E17B4334700772EF2 /* MapViewController.m in Sources */,
 				1F36624917906C9200A752B7 /* MenuViewController.m in Sources */,
 				1F46F54317B0043F00772EF2 /* SBJsonStreamParserAdapter.m in Sources */,
 				1F581C3A17A6E7C80070B804 /* GoLinkCommand.m in Sources */,

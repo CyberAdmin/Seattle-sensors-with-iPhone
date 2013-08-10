@@ -8,6 +8,12 @@
 	THE NETWORK. FURTHERMORE, SUPER-NODES CONTAIN A LIST OF ALL NODES IN THE NETWORK AND DISTRIBUTE THAT LIST
 	TO ALL NODES.
 
+  AUTHOR: Michael Reininger
+  ADVISOR: 	Ivan Seskar
+
+  OBJECTIVE: This script allows for smart phones which are unable to run Seattle to connect and share sensor data. For my summer project, I chose to work with vehicular OBD-II sensor data,
+  focusing on the sharing of fuel consumption data in the cloud. We take a variety of messages that are encoded with a special protocol and parse the messages to call the respective functions.
+  All available commands are listed below. 
 	
 
 
@@ -697,16 +703,7 @@ def timeout_stopcomm(commhandle):
 #end include sockettimeout.repy		
 def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
   message = sockobj.recv(10000000)  #Recieve bytes.
-  """
-  <nodename>name</nodename><status>REQUEST:RESPONSE</status><nodeIP>XXX.XXX.XXX.XXX</nodeIP>
-  ALL NODE COMMUNICATION STARTS WITH <nodename>
-  SCENARIO:
-	1. VESSEL1 SAYS: "WHO HAS X SENSOR DATA?" <nodename>VESSEL1</nodename><status>REQUEST</status><nodeIP>ves.sel.1ip.me</nodeIP><message>X</message>
-	2. VESSEL2 SAYS: "I DO! HERE IS MY X DATA FILE! <nodename>VESSEL2</nodename><status>RESPONSE</status><nodeIP>ves.sel.2ip.me</nodeIP><message>data.txt</message>
-	3. VESSEL1 SAYS: "THANKS!" Save data.txt to tmp.txt for further search of the file to analyze for specific time and location (filtration parameters)
-
-  """
-
+  
   """
   AVAILABLE COMMANDS THAT CAN BE SENT TO THE NODES:
   1. <nodename><status></status><nodeIP></nodeIP><message></message></nodename>  =To connect to a vesel with either a request or response to some sensor data. This is 2-way communication.
@@ -715,9 +712,9 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
   4. PING  =A ping command that is sent to a super-node to check if it is alive. This returns PONG if super-node, NOPE if not a super-node, and TIMEOUT if the socket times out.
   5. PONG  =A response to some ping command that is sent from a node to a super-node. If the vessel recieving the ping command is a super-node, it then responds with PONG. If it isn't, then it responds with NOPE.
   6. <REGISTER>  =A new node sends this command to a super-node and the super-node registers the new device and it's corresponding sensor by writing its IP and it's corresponding sensor to the nodes.txt.
-  7. <storenode>  =Everytime a new node joins the network, the super-node informs all nodes on the same network that a new node has joined by sending its IP and corresponding sensor type. This command applies only applys to nodes because the super-node always has the most updated list of nodes on the network.
+  7. <storenode>  =Everytime a new node joins the network, the super-node informs all nodes on the same network that a new node has joined by sending its IP and corresponding sensor type. This command only applies to nodes because the super-node always has the most updated list of nodes on the network.
   8. DEFAULT  =If anything other than the above is sent to any node, it is counted as an "Are you there (AYT)" request and thus if the node is alive, it responds with "HERE!".
-
+  9. <VEHICLE><make></make><model></model><parameters></parameters></VEHICLE> =iPhone sends Seattle node this to get data about the same vehicle.
 
   """
   if(message.startswith("<nodename>")):  #We are connected to a vessel.
@@ -732,7 +729,7 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
 				newfileobject = file("data.txt","r")
 				sockobj.send("<nodename>"+mycontext['my_name']+"</nodename><status>RESPONSE</status><nodeIP>"+getmyip()+"</nodeIP><message>"+newfileobject.read()+"</message>")   
 				newfileobject.close()  #Cleanup
-      else:  #If the requested sensor type does not match our attached sensor, then inform the requester that we don't ave the data.
+      else:  #If the requested sensor type does not match our attached sensor, then inform the requester that we don't have the data.
 				print "Sorry, I don't have your data."
 				sockobj.send("Sorry, I don't have your data.")
     else:   #If the incoming packet is a response, then we are being responded with our requested sensor type.
@@ -749,6 +746,7 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
 		print "iPhone wants: "+find_between(message, "<sensor>", "</sensor>")
 		d = open("nodes.txt", "r")
 		nodes = []
+
 		for line in d:
 			if line!="\n":
 				nodes.append(line)
@@ -761,17 +759,12 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
 					print resp
 					saveToTMP(resp)
 					sendTMPFile(sockobj)
-	#Check file list to see who has X. x
-	#Return the IP who does. x
-	#Send a REQUEST object with message X x
-	#Returns the whole file which is saved to tmp.txt x
-	#Push tmp.txt to iPhone.
-	#create a socket connection to the corresponding node on the list that has that specific sensor.
+
   elif(message.startswith("<?xml")):  #We are connected to an iPhone that is sending us sensor data..
     print "Connected to iPhone."
     try:
       myfileobject = open("data.txt","a")  #Open data.txt for appending.
-      print >> myfileobject, message  #Write the SML message to the myfileobject.
+      print >> myfileobject, message+"\n"  #Write the SML message to the myfileobject.
       myfileobject.close()  #Cleanup
       print "File open is a success."
       #my_sensor
@@ -799,13 +792,12 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
     except:
       print "File open failed."  #Something happend. Possibly a file write error. However, iPhone learns about this and does something with this error.
       sockobj.send("Fail.\n")
-
   elif(message.startswith("PING")):
     IAmBoostraper(sockobj)  #If we recieve a PING request, this means that some node is trying to check if the super node is alive. If so, then we, the super-node respond with a PONG command.
   elif(message.startswith("PONG")):
     checkIfBootstraper()  #If we recieve a PONG response, then this means that a super-node has confirmed that it is successfully alive.
   elif(message.startswith("<REGISTER>")):
-  		
+  		#NOTE: Please register at the terminal level by telnet'ing into the bootstrap node and sending <REGISTER> manually.
     if getmyip()==mycontext['primary']:  #Only super-nodes can register a new node to the network.
       #addToNodeList(message, sockobj)  #Write the vessel's ip address and its corresponding sensor and tell every node about it.
       obj = open("nodes.txt", "a")
@@ -817,16 +809,54 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
   elif(message.startswith("<storenode>")):  #If we recieve a storenode command, then we must store the passed node's IP address and its corresponding sensor.
     node = find_between(message, "<storenode>", "</storenode>")
     print node
-    """if find_between(node, "<ip>", "</ip>") == getmyip():  #ERROR: THIS DOESN'T SEEM TO WORK :( If the problem persits, then just send the whole file and when reading, just ignore ourselves.
-      print "My IP will be ommitted from the list."  #If we are registering ourselves, omit.
-      node = "" """
     f = open("nodes.txt","w")  #Just write all nodes to nodes.txt
     print >> f, node  #Print to nodes.txt file
     #Implement a way to distribute this whole file to every node on the network. 
+  elif(message.startswith("geo:all")):
+    sockobj.send(getGeosAndDesc())
+    print "I sent a GEO response."
+  elif(message.startswith("<VEHICLE>")):
+    #Query the database and find all MPG data regarding your car. This is sent with XML back to the phone to parse and display on a map. 
+    make = find_between(message, "<make>", "</make>")
+    model = find_between(message, "<model>", "</model>")
+    parameters = find_between(message, "<parameters>", "</parameters>")
+    print "Now looking for car with make: "+make+" and model: "+model+" with parameters: "+parameters+"."
+
+    sendGPSData(sockobj)
+  elif(message.startswith("sensorType")):
+    sockobj.send(mycontext['my_sensor'])
   else:
-    print "AYT REQUEST!"  #If we get something we don't like, then just take it as an AYT request and respond with, yes I'm here! This is like ping, but only for nodes.
+    print "Received AYT request."  #If we get something we don't like, then just take it as an AYT request and respond with, yes I'm here! This is like ping, but only for nodes.
     sockobj.send('Here!')
   stopcomm(thiscommhandle)
+
+def sendGPSData(sockobj):
+  myData = open("data.txt", "r") #Read my data file.
+  data = myData.readlines() #Read line by line.
+  myData.close() #Close.
+  csv = open("OBDData.csv", "a") #Create new file called OBDData.csv for append.
+  print >> csv, "latitude, longitude, value" #Print the headers to the file.
+
+  for line1 in data: 
+    if line1 != "\n":
+      lat1 = find_between(line1, "<swe:field name='latitude'>", "</swe:field name='latitude'>")
+      lon1 = find_between(line1, "<swe:field name='longitude'>", "</swe:field name='longitude'>") 
+      val1 = find_between(line1, "<swe:field name='sensorValue'>", "</swe:field name='sensorValue'>")
+      print >> csv, lat1+","+lon1+","+val1+","
+      
+  lol = open("tmp.txt", "r")  #Create a new file reader so that we read lines and parse for ips.
+  listOfData = lol.readlines()
+  lol.close()
+
+
+  for line in listOfData:
+    if line != "\n":  #Add all IPs to the nodes array and exclude any new line commands.
+      lat = find_between(line, "<swe:field name='latitude'>", "</swe:field name='latitude'>")
+      lon = find_between(line, "<swe:field name='longitude'>", "</swe:field name='longitude'>") 
+      val = find_between(line, "<swe:field name='sensorValue'>", "</swe:field name='sensorValue'>")
+      print >> csv, lat+","+lon+","+val+","
+  csv.close()
+  sockobj.send("DONE!")
 
 def pushToAllNodes(sockobj):
   sockobj.send("REGISTER OK") #Sends an REGISTER OK message to acknowledge.
@@ -852,8 +882,15 @@ def pushToAllNodes(sockobj):
 
 
 def checkIfBootstraper():
-  print 'CheckIfBootstraper'   #Unimplemented/Deprecated
 
+  print 'We have just been pinged by a bootstrapper.' 
+  """
+    Potential: We are recieving a PONG. This means that there is a bootstrap node that is alive. We need to check if that ip is truly the bootstrap and then continue. In the event that we do not
+    receive a PONG response, we must fire up the fallback bootstrap node. 
+
+    
+
+  """
 #Makeshift XML parser.
 def find_between( s, first, last ):
     
@@ -864,15 +901,24 @@ def find_between( s, first, last ):
 def saveToTMP(message):  #This saves the requested sensor data to the local tmp.txt file for pushing the results to the iPhone.
 
   myfileobject = open("tmp.txt","a")
-  
-  print >> myfileobject, find_between(message, "<message>", "</message>")
+  print message
+  print >> myfileobject, find_between(message, "<message>", "</message>")+"\n"
   #PUSH THE TMP TO iPhone
   myfileobject.close()
 def sendTMPFile(sockobj):
   sensorData = open("tmp.txt", "r")
-  sockobj.send(sensorData.read())
+  x = sensorData.read()
+  print "Length: "+str(len(x))
+  sockobj.send("<len>"+str(len(x))+"</len>")
+  sockobj.send(x)
   print "Sent sensor data to iPhone"
   sensorData.close()
+
+def getGeosAndDesc():
+  y = open("data.txt", "r")
+  contents = y.read()
+  return contents
+  y.close()
 def IAmBoostraper(socketobject):  #This is intended to check if the ping is a bootstraper... Let's fix this later.
   
   if (mycontext['primary'] == getmyip()):

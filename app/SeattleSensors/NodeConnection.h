@@ -56,5 +56,4 @@
 
 -(NSString *)sendRawDataWithResponse:(NSString *)data;  //Sends raw data with the expectation of a response.
 
--(void)sendRawDataFromFile:(NSString *)filename; //Sends raw data form file.
 @end

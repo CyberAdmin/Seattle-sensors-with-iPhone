@@ -26,6 +26,7 @@
 	UILabel*			rpmLabel;
 	UILabel*			speedLabel;
     UILabel*            milesPerGallon;
+    bool                stopped;
 
 }
 @property (nonatomic, retain) IBOutlet UIImageView *recordIcon;
@@ -45,7 +46,7 @@
 -(IBAction)record;
 -(IBAction)stop;
 -(IBAction)back;
--(void)pushToSeattle:(NSString *)sensorType value:(NSString *)val;
+-(void)writeOBDDATA:(NSString *)sensorType value:(NSString *)val;
 -(void)calcMPG:(NSString *)VSS andMAF:(NSString *)MAF;
-
+-(void)pushToSeattle;
 @end

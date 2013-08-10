@@ -45,6 +45,19 @@
     recording.hidden = YES;
     [self stopScan];
 
+
+    NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
+    NSString *obddata = [userD objectForKey:@"OBDData"];
+    if(obddata == nil || [obddata isEqualToString:@""]){
+        NSLog(@"Nothing in here...");
+    }else{
+        [self pushToSeattle];
+        [userD setObject:@"" forKey:@"OBDData"];
+        [userD synchronize];
+
+    }
+
+
 }
 -(IBAction)back{
     MenuViewController *mvc = [[MenuViewController alloc] initWithNibName:@"MenuViewController" bundle:nil];
@@ -245,6 +258,7 @@
         milesPerGallon.text = [NSString stringWithFormat:@"MPG: %f", MPGFinal];
         NSLog(@"MPG: %@",[NSString stringWithFormat:@"MPG: %f", MPGFinal] );
         [milesPerGallon setNeedsDisplay];
+        [self writeOBDDATA:@"FuelConsumption" value:[NSString stringWithFormat:@"%f", MPGFinal]];
     }
     
 }
@@ -263,17 +277,48 @@
 	FLINFO(@"DID RECEIVE ERROR")
 	FLNSERROR(error)
 }
--(void)pushToSeattle:(NSString *)sensorType value:(NSString *)val{
-    //BIG NO NO!!! PELASE WRITE ALL OF THE DATA TO THE FILE AND THEN WHEN THERE IS ENOUGH DATA, SEND IT TO SEATTLE! DO NOT SEND EACH PID TO THE SEATTLE CLOUD AND CRASH IT LOL
-    ModelViewController *mvc = [[ModelViewController alloc] init];
+-(void)writeOBDDATA:(NSString *)sensorType value:(NSString *)val{
+    /*  1. If NSUserDefaults == nil; then create a new one and save the data to that.
+            a. Wait till we press stop. Then append to the file, and call [nc sendMessage]
+            b. Delete NSUserDefaults.
+        2. If NSUserDefaults != nil; then read what we wrote in there, and then append the newest SML data. Repeat for every PID we recieve.
+            a. Wait till we press stop. Then read the file, and call [nc sendMessage]
+            b. Delete NSUserDefaults when stop pressed (see -(IBAction)stop)
+     */
+    MessageComposer *mc = [[MessageComposer alloc] init];
+    NSUserDefaults *brandDef = [NSUserDefaults standardUserDefaults];
+    NSString *brand = [brandDef objectForKey:@"Brand"];
+    NSUserDefaults *modelDef = [NSUserDefaults standardUserDefaults];
+    NSString *model = [modelDef objectForKey:@"Model"];
 
+    NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
+    NSString *obddata = [userD objectForKey:@"OBDData"];
+    //NSLog(@"OBDData at pushToSeattle: %@", obddata);
+    if(obddata == nil || [obddata isEqualToString:@""]){
+        NSLog(@"{OBDDATA} IS NIL. Now creating one...");
+        NSLog(@"{OBDDATA} writing to file: %@", [mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sensorType] value:val]);
+        [userD setObject:[mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sensorType] value:val] forKey:@"OBDData"];
+        [userD synchronize];
+        NSLog(@"{OBDDATA} completed writing to NSUserDefault for key OBDData.");
+    }else{
+        NSLog(@"{OBDDATA} has text. We will append to it now.");
+        [userD setObject:[obddata stringByAppendingString:[mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sensorType] value:val]] forKey:@"OBDData"];
+        [userD synchronize];
+        NSLog(@"{OBDDATA} completed appending to file.");
+    }
+
+    
+}
+-(void)pushToSeattle{
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *defIP = [userDefaults objectForKey:@"DefaultNodeIP"];
     NSLog(@"DefIP: %@", defIP);
-    MessageComposer *mc = [[MessageComposer alloc] init];
+    NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
+    NSString *obddata = [userD objectForKey:@"OBDData"];
+    //NSLog(@"{pushToSeattle} obddata: %@", obddata);
     NodeConnection *nc = [[NodeConnection alloc] init];
     [nc newConnection:[NSString stringWithFormat:@"%@", defIP]];
-    [nc sendRawData:[mc message:[NSString stringWithFormat:@"%@:%@-%@", mvc.brand, mvc.model, sensorType] value:val]];
+    [nc sendRawData:obddata];
     
 }
 #pragma mark -
