@@ -65,7 +65,7 @@
     NSLog(@"File size: %@", maxString);
     int maxInt = [maxString intValue];
     char dRec[maxInt];
-    long rec = [client receiveBytes:dataRec count:maxInt];  //Really doesn't do anything, but I'll keep it here 'cause it works :)
+    long rec = [client receiveBytes:dataRec count:maxInt];  
     NSLog(@"DATAREC: %s", dataRec);
 
     [client close];
@@ -103,7 +103,7 @@
     NSLog(@"File size: %@", maxString);
     int maxInt = [maxString intValue];
     char dRec[maxInt];
-    long rec = [client receiveBytes:dataRec count:maxInt];  //Really doesn't do anything, but I'll keep it here 'cause it works :)
+    long rec = [client receiveBytes:dataRec count:maxInt]; 
     NSLog(@"DATAREC: %s", dataRec);
     
     [client close];
@@ -160,24 +160,21 @@
     
     NSString *appFile = [documentsDirectory stringByAppendingPathComponent:fileName];
     
-    NSFileManager *fileManager=[NSFileManager defaultManager];
+    NSLog(@"{readFile:} filename: %@", appFile);
     
-    if ([fileManager fileExistsAtPath:appFile])
+    NSFileManager *fileManager=[NSFileManager defaultManager];
+
         
-    {
+    NSError *error= NULL;
         
-        NSError *error= NULL;
-        
-        id resultData=[NSString stringWithContentsOfFile:appFile encoding:NSUTF8StringEncoding error:&error];
-        if (error == NULL)
+    id resultData=[NSString stringWithContentsOfFile:appFile encoding:NSUTF8StringEncoding error:&error];
+    if (error == NULL){
+        return resultData;
             
-        {
-            
-            return resultData;
-            
-        }
-        
+    }else{
+        NSLog(@"%@", [error description]);
     }
+
     return NULL;
     
 }
@@ -186,23 +183,7 @@
     return status;
 }
 -(NSString *)receiveData{
-    /*long remaining = 1000000;
-    NSMutableData *outputData = [NSMutableData dataWithCapacity:remaining];
-    char dataRec[2000];
-    long received;
-    while (remaining > 0) {
-        received = [client receiveBytes:dataRec limit:MIN(2000, remaining)];
-        if (received > 0) {
-            [outputData appendBytes:dataRec length:received];
-            remaining -= received;
-        }
-        else if (received == 0) {
-            NSLog(@"remote connection was closed");
-        }
-        else {
-            NSLog(@"Error occurred: %@", [client lastError]);
-        }
-    }*/
+    
     return output;
     
 }
@@ -239,8 +220,60 @@
                         }
     return result;
 }
+/**
+ *	Used in sending raw data from file. This is safer than calling sendRawData with contents of file.
+ *
+ *	@param	filename	The filename where the file you wish to send is located.
+ */
 -(void)sendRawDataFromFile:(NSString *)filename{
-    
+    NSLog(@"{sendRawDataFromFile: } Filename: %@", filename);
     [self sendRawData:[self readFile:filename]];
+}
+/**
+ *	Append to file. Used if you do not wish to overwrite an existing file.
+ *
+ *	@param	fileName	A filename. This is stored in the documents directory. (Ex. myData.txt)
+ *	@param	data	The data you wish to append to the file.
+ */
+-(void)appendToFile:(NSString *)fileName data:(NSString *)data{
+    NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDir = [documentPaths objectAtIndex:0];
+    NSString *logPath = [[NSString alloc] initWithFormat:@"%@",[documentsDir stringByAppendingPathComponent:fileName]];
+    NSLog(@"{appendToFile: } logPath: %@", logPath);
+
+    NSFileHandle* fh = [NSFileHandle fileHandleForWritingAtPath:logPath];
+    if ( !fh ) {
+        [[NSFileManager defaultManager] createFileAtPath:logPath contents:nil attributes:nil];
+        fh = [NSFileHandle fileHandleForWritingAtPath:logPath];
+    }
+    if ( !fh ) NSLog(@"{FH} = NO");
+    @try {
+        [fh seekToEndOfFile];
+        [fh writeData:[data dataUsingEncoding:NSUTF8StringEncoding]];
+    }
+    @catch (NSException * e) {
+        NSLog(@"{EXCEPTION} %@", [e description]);
+    }
+    [fh closeFile];
+    NSLog(@"Appended file.");
+}
+/**
+ *	Deletes file.
+ *
+ *	@param	fileName	Filename (ex. OBDData.txt)
+ */
+-(void)deleteFile:(NSString *)fileName{
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    
+    NSString *appFile = [documentsDirectory stringByAppendingPathComponent:fileName];
+    
+    NSFileManager *fileManager =[NSFileManager defaultManager];
+
+    [fileManager removeItemAtPath:appFile error:NULL];
+    
+    NSLog(@"Deleted file at: %@", appFile);
 }
 @end

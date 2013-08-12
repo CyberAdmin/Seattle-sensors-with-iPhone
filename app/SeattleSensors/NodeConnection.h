@@ -54,6 +54,12 @@
 
 -(NSString *)findBetween:(NSString *)message first:(NSString *)begin last:(NSString *)end; //Make-shift XML parser to find the string between two delimeters.
 
--(NSString *)sendRawDataWithResponse:(NSString *)data;  //Sends raw data with the expectation of a response.
+-(NSString *)sendRawDataWithResponse:(NSString *)data;  //Sends raw data with the expectation of a response. (DEPRECATED)
+
+-(void)sendRawDataFromFile:(NSString *)filename;  //Sends raw data from file. Easier to call than having to read the file itself elsewhere and then pushing that using sendRawData.
+
+-(void)appendToFile:(NSString *)fileName data:(NSString *)data;  //Appends data to file. Used in OBDData.txt.
+
+-(void)deleteFile:(NSString *)fileName;  //Deletes file.
 
 @end

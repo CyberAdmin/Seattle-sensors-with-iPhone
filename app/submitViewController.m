@@ -33,6 +33,11 @@
     accel.delegate = self;
     recording.hidden = NO;
     [self scan];
+    aTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+                                              target:self
+                                            selector:@selector(calcMPG)
+                                            userInfo:nil
+                                             repeats:YES];
     
 }
 -(IBAction)stop{
@@ -44,18 +49,8 @@
     accel.delegate = nil;
     recording.hidden = YES;
     [self stopScan];
-
-
-    NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
-    NSString *obddata = [userD objectForKey:@"OBDData"];
-    if(obddata == nil || [obddata isEqualToString:@""]){
-        NSLog(@"Nothing in here...");
-    }else{
-        [self pushToSeattle];
-        [userD setObject:@"" forKey:@"OBDData"];
-        [userD synchronize];
-
-    }
+    [aTimer invalidate];
+    //[self pushToSeattle];
 
 
 }
@@ -86,6 +81,11 @@
     
     // Do any additional setup after loading the view from its nib.
 }
+-(void)viewDidAppear:(BOOL)animated{
+    
+
+}
+
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
     //NSString *data = [NSString stringWithFormat:@"(%.02f, %.02f, %.02f)", acceleration.x, acceleration.y, acceleration.z];
     //NSLog(@"(%.02f, %.02f, %.02f)", acceleration.x, acceleration.y, acceleration.z);
@@ -236,7 +236,9 @@
 		else{
         
         }
-        [self calcMPG];
+        //NEED TO SPACE OUT IN DISTANCE SO THAT WE DON'T CLOG THE MEMORY.
+
+        //[self calcMPG];
 	}
 	
 }
@@ -251,9 +253,13 @@
     if(MPGFinal != MPGFinal){
         NSLog(@"NaN error.");
         milesPerGallon.text = @"MPG: 0";
+        [self writeOBDDATA:@"FuelConsumption" value:[NSString stringWithFormat:@"0"]];
+
     }else if(MPGFinal == INFINITY){
         NSLog(@"MPG is infinite!!!");
         milesPerGallon.text = @"MPG: 99.9";
+        [self writeOBDDATA:@"FuelConsumption" value:[NSString stringWithFormat:@"99.9"]];
+
     }else{
         milesPerGallon.text = [NSString stringWithFormat:@"MPG: %f", MPGFinal];
         NSLog(@"MPG: %@",[NSString stringWithFormat:@"MPG: %f", MPGFinal] );
@@ -278,20 +284,21 @@
 	FLNSERROR(error)
 }
 -(void)writeOBDDATA:(NSString *)sensorType value:(NSString *)val{
-    /*  1. If NSUserDefaults == nil; then create a new one and save the data to that.
-            a. Wait till we press stop. Then append to the file, and call [nc sendMessage]
-            b. Delete NSUserDefaults.
-        2. If NSUserDefaults != nil; then read what we wrote in there, and then append the newest SML data. Repeat for every PID we recieve.
-            a. Wait till we press stop. Then read the file, and call [nc sendMessage]
-            b. Delete NSUserDefaults when stop pressed (see -(IBAction)stop)
-     */
+
     MessageComposer *mc = [[MessageComposer alloc] init];
     NSUserDefaults *brandDef = [NSUserDefaults standardUserDefaults];
     NSString *brand = [brandDef objectForKey:@"Brand"];
     NSUserDefaults *modelDef = [NSUserDefaults standardUserDefaults];
     NSString *model = [modelDef objectForKey:@"Model"];
 
-    NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
+    NodeConnection *nc = [[NodeConnection alloc] init];
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *defIP = [userDefaults objectForKey:@"DefaultNodeIP"];
+    [nc newConnection:defIP];
+    //[nc appendToFile:@"OBDData.txt" data:[mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sensorType] value:val]];
+    [nc sendRawData:[mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sensorType] value:val]];
+    NSLog(@"{scanTool: }wrote to server.");
+    /*NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
     NSString *obddata = [userD objectForKey:@"OBDData"];
     //NSLog(@"OBDData at pushToSeattle: %@", obddata);
     if(obddata == nil || [obddata isEqualToString:@""]){
@@ -305,20 +312,24 @@
         [userD setObject:[obddata stringByAppendingString:[mc message:[NSString stringWithFormat:@"%@:%@-%@", brand, model, sensorType] value:val]] forKey:@"OBDData"];
         [userD synchronize];
         NSLog(@"{OBDDATA} completed appending to file.");
-    }
+    }*/
 
     
 }
 -(void)pushToSeattle{
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *defIP = [userDefaults objectForKey:@"DefaultNodeIP"];
     NSLog(@"DefIP: %@", defIP);
-    NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
-    NSString *obddata = [userD objectForKey:@"OBDData"];
+   /* NSUserDefaults *userD = [NSUserDefaults standardUserDefaults];
+    NSString *obddata = [userD objectForKey:@"OBDData"];*/
     //NSLog(@"{pushToSeattle} obddata: %@", obddata);
     NodeConnection *nc = [[NodeConnection alloc] init];
     [nc newConnection:[NSString stringWithFormat:@"%@", defIP]];
-    [nc sendRawData:obddata];
+    //[nc sendRawData:obddata];
+    [nc sendRawDataFromFile:@"OBDData.txt"];
+    [nc deleteFile:@"OBDData.txt"];
+    NSLog(@"Sent OBDData.txt to node. Please check!");
     
 }
 #pragma mark -

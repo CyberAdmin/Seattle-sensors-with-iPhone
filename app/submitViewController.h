@@ -27,6 +27,7 @@
 	UILabel*			speedLabel;
     UILabel*            milesPerGallon;
     bool                stopped;
+    NSTimer *aTimer;
 
 }
 @property (nonatomic, retain) IBOutlet UIImageView *recordIcon;

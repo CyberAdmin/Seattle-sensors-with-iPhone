@@ -42,6 +42,7 @@
 		1F46F55917B42EB300772EF2 /* MapBox.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1F46F55817B42EB300772EF2 /* MapBox.bundle */; };
 		1F46F55D17B4325500772EF2 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F46F55C17B4324A00772EF2 /* MapViewController.xib */; };
 		1F46F55E17B4334700772EF2 /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F46F55B17B4324A00772EF2 /* MapViewController.m */; };
+		1F46F56117B7E5C000772EF2 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F46F56017B7E5C000772EF2 /* Tests.m */; };
 		1F55556317A89F5500608B4C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F55556217A89F5500608B4C /* CoreFoundation.framework */; };
 		1F55556917A89F5500608B4C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1F55556717A89F5500608B4C /* InfoPlist.strings */; };
 		1F581C3517A6E7C80070B804 /* FLSimScanTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F581C0E17A6E7C80070B804 /* FLSimScanTool.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -151,6 +152,8 @@
 		1F46F55A17B4324A00772EF2 /* MapViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
 		1F46F55B17B4324A00772EF2 /* MapViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
 		1F46F55C17B4324A00772EF2 /* MapViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
+		1F46F55F17B7E5C000772EF2 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tests.h; sourceTree = "<group>"; };
+		1F46F56017B7E5C000772EF2 /* Tests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		1F55556117A89F5500608B4C /* iSeattle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iSeattle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F55556217A89F5500608B4C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		1F55556617A89F5500608B4C /* iSeattle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iSeattle-Info.plist"; sourceTree = "<group>"; };
@@ -541,6 +544,8 @@
 				1F46F55A17B4324A00772EF2 /* MapViewController.h */,
 				1F46F55B17B4324A00772EF2 /* MapViewController.m */,
 				1F46F55C17B4324A00772EF2 /* MapViewController.xib */,
+				1F46F55F17B7E5C000772EF2 /* Tests.h */,
+				1F46F56017B7E5C000772EF2 /* Tests.m */,
 			);
 			path = SeattleSensors;
 			sourceTree = "<group>";
@@ -712,6 +717,7 @@
 				1F46F54317B0043F00772EF2 /* SBJsonStreamParserAdapter.m in Sources */,
 				1F581C3A17A6E7C80070B804 /* GoLinkCommand.m in Sources */,
 				1F46F54217B0043F00772EF2 /* SBJsonStreamParserAccumulator.m in Sources */,
+				1F46F56117B7E5C000772EF2 /* Tests.m in Sources */,
 				1F36624617906BDA00A752B7 /* submitViewController.m in Sources */,
 				1F581C3B17A6E7C80070B804 /* GoLinkResponseParser.m in Sources */,
 				1F581C4517A6E7C80070B804 /* Base64Extensions.m in Sources */,

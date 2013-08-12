@@ -812,7 +812,7 @@ def hello(ip, port, sockobj, thiscommhandle, listencommhandle):
     f = open("nodes.txt","w")  #Just write all nodes to nodes.txt
     print >> f, node  #Print to nodes.txt file
     #Implement a way to distribute this whole file to every node on the network. 
-  elif(message.startswith("geo:all")):
+  elif(message.startswith("geo:me")):
     sockobj.send(getGeosAndDesc())
     print "I sent a GEO response."
   elif(message.startswith("<VEHICLE>")):
@@ -915,10 +915,19 @@ def sendTMPFile(sockobj):
   sensorData.close()
 
 def getGeosAndDesc():
-  y = open("data.txt", "r")
-  contents = y.read()
-  return contents
-  y.close()
+  myData = open("data.txt", "r") #Read my data file.
+  data = myData.readlines() #Read line by line.
+  myData.close() #Close.
+  csv = open("MyOBDData.csv", "a") #Create new file called OBDData.csv for append.
+  print >> csv, "latitude, longitude, value" #Print the headers to the file.
+
+  for line in data: 
+    if line != "\n":
+      lat1 = find_between(line, "<swe:field name='latitude'>", "</swe:field name='latitude'>")
+      lon1 = find_between(line, "<swe:field name='longitude'>", "</swe:field name='longitude'>") 
+      val1 = find_between(line, "<swe:field name='sensorValue'>", "</swe:field name='sensorValue'>")
+      print >> csv, lat1+","+lon1+","+val1+","
+  return "Your OBDData saved at MyOBDData.csv"
 def IAmBoostraper(socketobject):  #This is intended to check if the ping is a bootstraper... Let's fix this later.
   
   if (mycontext['primary'] == getmyip()):

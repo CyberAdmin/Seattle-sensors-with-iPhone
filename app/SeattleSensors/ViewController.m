@@ -10,6 +10,7 @@
 #import "MessageComposer.h"
 #import "NodeConnection.h"
 #import "SensorPickerViewController.h"
+#import "Tests.h"
 @interface ViewController ()
 @end
 @implementation ViewController
@@ -33,10 +34,15 @@
     */
 }
 -(IBAction)next{
-
+    
     NSUserDefaults *nodeIPDefault = [NSUserDefaults standardUserDefaults];
     [nodeIPDefault setObject:nodeIP.text forKey:@"DefaultNodeIP"];
     NSLog(@"AT NEXT: %@", nodeIP.text);
+    /*Tests *t = [[Tests alloc] init];
+    for(int i=0; i<10; i++){
+        [t _testAppendData:[NSString stringWithFormat:@"%i", i]];
+    }
+    [t _testPushToSeattle:nodeIP.text];*/
     SensorPickerViewController *spvc = [[SensorPickerViewController alloc] initWithNibName:@"SensorPickerViewController" bundle:nil];
     [self presentViewController:spvc animated:YES completion:NULL];
     
@@ -44,6 +50,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *defIP = [userDefaults objectForKey:@"DefaultNodeIP"];
     NSLog(@"DefIP: %@", defIP);
