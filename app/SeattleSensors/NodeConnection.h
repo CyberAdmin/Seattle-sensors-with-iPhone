@@ -20,8 +20,7 @@
             5) Send data!
                 [connection sendRawData:@"Hello, Seattle! This is an iPhone!"];
 
-	YouTube tutorial video available at:
-	
+
  */
 
 #import <Foundation/Foundation.h>
